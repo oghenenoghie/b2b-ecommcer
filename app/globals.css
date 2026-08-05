@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --radius: 2px;
+  --ring: #0a0a0a;
+  --tracking-label: 0.08em;
+}
+
+@layer base {
+  * {
+    @apply border-line;
+  }
+  body {
+    @apply bg-paper text-ink;
+  }
+  ::selection {
+    @apply bg-ink text-paper;
+  }
+}
+
+@layer components {
+  /* Label role: nav, eyebrows, facet headers, table <th>, status chips */
+  .label {
+    @apply font-body text-[0.75rem] font-medium uppercase tracking-label text-smoke;
+  }
+  /* Data role: prices, SKUs, quantities, MOQ, order/invoice numbers */
+  .data {
+    @apply font-mono text-sm tabular-nums text-ink;
+  }
+}
