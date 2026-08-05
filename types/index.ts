@@ -115,12 +115,14 @@ export type Rfq = {
   items: RfqItem[];
 };
 
+export type QuoteLine = { product_id: string; qty: number; unit_price: number };
+
 export type Quote = {
   id: string;
   rfq_id: string;
   vendor_id: string;
   valid_until: string;
-  lines: { product_id: string; qty: number; unit_price: number }[];
+  lines: QuoteLine[];
   total: number;
   currency: string;
   status: "draft" | "sent" | "accepted" | "declined" | "expired";
@@ -227,4 +229,5 @@ export type ProductCardData = {
   price: Money | null; // null when quote-only
   moq: number;
   inStock: boolean;
+  imageUrl: string | null;
 };

@@ -1,10 +1,20 @@
 import type { NextConfig } from "next";
 
+function supabaseImageRemotePattern(): NonNullable<NextConfig["images"]>["remotePatterns"] {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!url) return [];
+
+  try {
+    const { hostname } = new URL(url);
+    return [{ protocol: "https", hostname, pathname: "/storage/v1/object/public/**" }];
+  } catch {
+    return [];
+  }
+}
+
 const nextConfig: NextConfig = {
   images: {
-    // Add the Supabase Storage host once a project exists, e.g.
-    // { protocol: "https", hostname: "<project-ref>.supabase.co", pathname: "/storage/v1/object/public/**" }
-    remotePatterns: [],
+    remotePatterns: supabaseImageRemotePattern(),
   },
 };
 

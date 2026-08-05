@@ -1,4 +1,9 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+
+import { ResultGrid } from "@/components/ai/ResultGrid";
+import { getCategoryBySlug } from "@/lib/data/categories";
+import { listActiveProducts } from "@/lib/data/products";
 
 export async function generateMetadata({
   params,
@@ -6,21 +11,25 @@ export async function generateMetadata({
   params: Promise<{ category: string }>;
 }): Promise<Metadata> {
   const { category } = await params;
-  return { title: category.replace(/-/g, " ") };
+  const record = await getCategoryBySlug(category);
+  return { title: record?.name ?? category.replace(/-/g, " ") };
 }
 
 export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
-  const { category } = await params;
+  const { category: slug } = await params;
+  const category = await getCategoryBySlug(slug);
+
+  if (!category) notFound();
+
+  const products = await listActiveProducts({ categorySlug: slug, limit: 48 });
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-12">
       <p className="label mb-2">Category</p>
-      <h1 className="font-display text-display-lg capitalize text-ink">
-        {category.replace(/-/g, " ")}
-      </h1>
-      <p className="mt-4 text-sm text-smoke">
-        Category browse + facet rail lands in Build order step 3.
-      </p>
+      <h1 className="font-display text-display-lg text-ink">{category.name}</h1>
+      <div className="mt-10">
+        <ResultGrid products={products} />
+      </div>
     </div>
   );
 }

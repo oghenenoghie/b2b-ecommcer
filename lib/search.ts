@@ -10,24 +10,15 @@ export type SearchFilters = {
 };
 
 /**
- * Hybrid search: embeds the query, then calls the `search_products` RPC,
- * which fuses pgvector cosine similarity with Postgres FTS/pg_trgm
- * (reciprocal-rank fusion). See references/ai-search.md for the RPC SQL —
- * it ships with the Build order step 2 schema migration, not this scaffold.
+ * Hybrid search: embeds the query, then calls the `search_products` RPC
+ * (supabase/migrations/0008_search_products_rpc.sql), which fuses pgvector
+ * cosine similarity with Postgres FTS/pg_trgm (reciprocal-rank fusion).
  */
 export async function searchProducts(filters: SearchFilters) {
   const supabase = await createClient();
   const queryEmbedding = await embed(filters.queryText);
 
-  // Cast: the placeholder Database type (types/supabase.ts) can't give
-  // supabase-js's generic `rpc()` overloads a literal function name to key
-  // off. Drop the cast once `search_products` exists in generated types.
-  const rpc = supabase.rpc.bind(supabase) as unknown as (
-    fn: string,
-    args: Record<string, unknown>,
-  ) => Promise<{ data: unknown; error: { message: string } | null }>;
-
-  const { data, error } = await rpc("search_products", {
+  const { data, error } = await supabase.rpc("search_products", {
     query_text: filters.queryText,
     query_embedding: queryEmbedding,
     filter_category: filters.category ?? null,

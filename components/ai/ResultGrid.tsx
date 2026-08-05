@@ -14,6 +14,7 @@ export function ResultGrid({ products }: { products: ProductCardData[] }) {
             slug={product.slug}
             vendor={{ slug: product.vendor.slug, name: product.vendor.display_name }}
             title={product.title}
+            imageUrl={product.imageUrl}
             price={product.price}
             moq={product.moq}
             inStock={product.inStock}
